@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { Bot, Key, User, Power, Save, Eye, EyeOff, AlertCircle, CheckCircle, Webhook, Trash2, RefreshCw } from 'lucide-react'
-import { NeoCard, NeoCardHeader, NeoCardTitle, NeoCardDescription, NeoCardContent, NeoCardFooter } from '@/components/ui/neo-card'
 import { NeoButton } from '@/components/ui/neo-button'
 import { NeoInput } from '@/components/ui/neo-input'
 import { NeoBadge } from '@/components/ui/neo-badge'
@@ -132,7 +131,9 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-12 h-12 bg-primary neo-border animate-pulse" />
+        <div className="w-12 h-12 bg-primary/20 rounded-xl animate-pulse flex items-center justify-center">
+          <div className="w-5 h-5 rounded-full bg-primary animate-ping" />
+        </div>
       </div>
     )
   }
@@ -140,40 +141,48 @@ export default function SettingsPage() {
   return (
     <div className="flex flex-col gap-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-black uppercase tracking-tight">Pengaturan Bot</h1>
-        <p className="text-muted-foreground">Konfigurasi token dan Owner ID untuk menjalankan bot Anda</p>
+        <h1 className="text-2xl font-bold tracking-tight">Pengaturan Bot</h1>
+        <p className="text-muted-foreground text-sm">Konfigurasi token dan Owner ID untuk menjalankan bot Anda</p>
       </div>
 
       {message && (
         <div
-          className={`p-4 neo-border-2 flex items-center gap-3 ${
-            message.type === 'success' ? 'bg-success text-success-foreground' : 'bg-destructive text-destructive-foreground'
+          className={`p-4 rounded-xl flex items-center gap-3 ${
+            message.type === 'success' 
+              ? 'bg-success/10 text-success border border-success/20' 
+              : 'bg-destructive/10 text-destructive border border-destructive/20'
           }`}
         >
           {message.type === 'success' ? (
-            <CheckCircle className="w-5 h-5" />
+            <CheckCircle className="w-5 h-5 shrink-0" />
           ) : (
-            <AlertCircle className="w-5 h-5" />
+            <AlertCircle className="w-5 h-5 shrink-0" />
           )}
-          <span className="font-medium">{message.text}</span>
+          <span className="font-medium text-sm">{message.text}</span>
         </div>
       )}
 
       {/* Bot Status Card */}
-      <NeoCard className={settings?.isActive ? 'bg-accent' : 'bg-warning'}>
-        <NeoCardContent className="flex items-center justify-between">
+      <div className={`p-5 rounded-xl border ${
+        settings?.isActive 
+          ? 'bg-gradient-to-br from-accent/20 to-accent/5 border-accent/30' 
+          : 'bg-gradient-to-br from-warning/20 to-warning/5 border-warning/30'
+      }`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-white neo-border-2 flex items-center justify-center">
-              <Bot className="w-8 h-8" />
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+              settings?.isActive ? 'bg-accent/20 text-accent' : 'bg-warning/20 text-warning'
+            }`}>
+              <Bot className="w-6 h-6" />
             </div>
             <div>
-              <p className="font-black text-lg uppercase">Status Bot</p>
+              <p className="font-semibold">Status Bot</p>
               <div className="flex items-center gap-2 mt-1">
-                <NeoBadge variant={settings?.isActive ? 'success' : 'destructive'}>
+                <NeoBadge variant={settings?.isActive ? 'success' : 'warning'}>
                   {settings?.isActive ? 'Aktif' : 'Nonaktif'}
                 </NeoBadge>
                 {settings?.botName && (
-                  <span className="text-sm font-medium">@{settings.botName}</span>
+                  <span className="text-sm text-muted-foreground">@{settings.botName}</span>
                 )}
               </div>
             </div>
@@ -183,29 +192,36 @@ export default function SettingsPage() {
             variant={settings?.isActive ? 'destructive' : 'success'}
             onClick={handleToggle}
             disabled={toggling || !settings}
+            className="w-full sm:w-auto"
           >
-            <Power className="w-5 h-5" />
+            <Power className="w-4 h-4" />
             {toggling ? 'Memproses...' : settings?.isActive ? 'Nonaktifkan' : 'Aktifkan'}
           </NeoButton>
-        </NeoCardContent>
-      </NeoCard>
+        </div>
+      </div>
 
       {/* Webhook Status Card */}
-      <NeoCard className={webhookInfo?.url ? 'bg-success' : 'bg-muted'}>
-        <NeoCardContent className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
+      <div className={`p-5 rounded-xl border ${
+        webhookInfo?.url 
+          ? 'bg-gradient-to-br from-primary/20 to-primary/5 border-primary/30' 
+          : 'bg-card border-border'
+      }`}>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-white neo-border-2 flex items-center justify-center">
-                <Webhook className="w-8 h-8" />
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                webhookInfo?.url ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
+              }`}>
+                <Webhook className="w-6 h-6" />
               </div>
               <div>
-                <p className="font-black text-lg uppercase">Webhook Telegram</p>
+                <p className="font-semibold">Webhook Telegram</p>
                 <div className="flex items-center gap-2 mt-1">
                   <NeoBadge variant={webhookInfo?.url ? 'success' : 'destructive'}>
                     {webhookInfo?.url ? 'Terpasang' : 'Belum Dipasang'}
                   </NeoBadge>
                   {webhookInfo?.pending_update_count !== undefined && webhookInfo.pending_update_count > 0 && (
-                    <span className="text-sm font-medium">({webhookInfo.pending_update_count} pending)</span>
+                    <span className="text-xs text-muted-foreground">({webhookInfo.pending_update_count} pending)</span>
                   )}
                 </div>
               </div>
@@ -216,24 +232,26 @@ export default function SettingsPage() {
                 variant="default"
                 onClick={handleSetWebhook}
                 disabled={settingWebhook || !settings?.botToken}
+                className="flex-1 sm:flex-none"
               >
-                {webhookInfo?.url ? <RefreshCw className="w-5 h-5" /> : <Webhook className="w-5 h-5" />}
+                {webhookInfo?.url ? <RefreshCw className="w-4 h-4" /> : <Webhook className="w-4 h-4" />}
                 {settingWebhook ? 'Memproses...' : webhookInfo?.url ? 'Perbarui' : 'Pasang Webhook'}
               </NeoButton>
               {webhookInfo?.url && (
                 <NeoButton
                   variant="destructive"
+                  size="icon"
                   onClick={handleDeleteWebhook}
                   disabled={settingWebhook}
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2 className="w-4 h-4" />
                 </NeoButton>
               )}
             </div>
           </div>
           
           {webhookInfo?.url && (
-            <div className="bg-white/50 p-3 neo-border-2 text-sm font-mono break-all">
+            <div className="bg-muted/50 p-3 rounded-lg text-xs font-mono break-all text-muted-foreground border border-border/50">
               {webhookInfo.url}
             </div>
           )}
@@ -243,44 +261,42 @@ export default function SettingsPage() {
               Simpan pengaturan bot terlebih dahulu sebelum memasang webhook.
             </p>
           )}
-        </NeoCardContent>
-      </NeoCard>
+        </div>
+      </div>
 
       {/* Bot Configuration */}
-      <NeoCard>
-        <NeoCardHeader>
-          <NeoCardTitle>Konfigurasi Bot</NeoCardTitle>
-          <NeoCardDescription>
+      <div className="p-5 rounded-xl bg-card border border-border">
+        <div className="mb-5">
+          <h3 className="font-semibold">Konfigurasi Bot</h3>
+          <p className="text-sm text-muted-foreground">
             Masukkan token bot dari BotFather dan ID Telegram Anda
-          </NeoCardDescription>
-        </NeoCardHeader>
+          </p>
+        </div>
         
         <form action={handleSubmit}>
-          <NeoCardContent className="flex flex-col gap-4">
+          <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <label htmlFor="botToken" className="text-sm font-bold uppercase tracking-wide">
+              <label htmlFor="botToken" className="text-sm font-medium text-muted-foreground">
                 Bot Token
               </label>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <NeoInput
-                    id="botToken"
-                    name="botToken"
-                    type={showToken ? 'text' : 'password'}
-                    placeholder="123456789:ABCdefGHIjklMNOpqrsTUVwxyz"
-                    className="pl-11 pr-12 font-mono text-sm"
-                    defaultValue={settings?.botToken || ''}
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowToken(!showToken)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    {showToken ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
+              <div className="relative">
+                <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <NeoInput
+                  id="botToken"
+                  name="botToken"
+                  type={showToken ? 'text' : 'password'}
+                  placeholder="123456789:ABCdefGHIjklMNOpqrsTUVwxyz"
+                  className="pl-11 pr-12 font-mono text-sm"
+                  defaultValue={settings?.botToken || ''}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowToken(!showToken)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showToken ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
               <p className="text-xs text-muted-foreground">
                 Dapatkan token dari @BotFather di Telegram
@@ -288,7 +304,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label htmlFor="ownerId" className="text-sm font-bold uppercase tracking-wide">
+              <label htmlFor="ownerId" className="text-sm font-medium text-muted-foreground">
                 Owner ID
               </label>
               <div className="relative">
@@ -309,7 +325,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label htmlFor="botName" className="text-sm font-bold uppercase tracking-wide">
+              <label htmlFor="botName" className="text-sm font-medium text-muted-foreground">
                 Nama Bot (Opsional)
               </label>
               <div className="relative">
@@ -328,44 +344,38 @@ export default function SettingsPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-muted neo-border-2">
+            <label className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted/70 transition-colors">
               <input
                 type="checkbox"
                 id="isActive"
                 name="isActive"
                 defaultChecked={settings?.isActive || false}
-                className="w-5 h-5 neo-border-2 bg-input cursor-pointer"
+                className="w-5 h-5 rounded border-border accent-primary cursor-pointer"
               />
-              <label htmlFor="isActive" className="font-medium cursor-pointer">
+              <span className="font-medium text-sm">
                 Aktifkan bot setelah menyimpan
-              </label>
-            </div>
-          </NeoCardContent>
+              </span>
+            </label>
 
-          <NeoCardFooter>
-            <NeoButton type="submit" disabled={saving}>
-              <Save className="w-5 h-5" />
+            <NeoButton type="submit" disabled={saving} className="w-full sm:w-auto">
+              <Save className="w-4 h-4" />
               {saving ? 'Menyimpan...' : 'Simpan Pengaturan'}
             </NeoButton>
-          </NeoCardFooter>
+          </div>
         </form>
-      </NeoCard>
+      </div>
 
       {/* Help Card */}
-      <NeoCard className="bg-primary text-primary-foreground">
-        <NeoCardHeader>
-          <NeoCardTitle>Cara Mendapatkan Token Bot</NeoCardTitle>
-        </NeoCardHeader>
-        <NeoCardContent>
-          <ol className="list-decimal list-inside flex flex-col gap-2 text-sm">
-            <li>Buka Telegram dan cari @BotFather</li>
-            <li>Kirim perintah /newbot untuk membuat bot baru</li>
-            <li>Ikuti instruksi dan beri nama bot Anda</li>
-            <li>Salin token yang diberikan ke field di atas</li>
-            <li>Untuk Owner ID, cari @userinfobot dan kirim pesan apapun</li>
-          </ol>
-        </NeoCardContent>
-      </NeoCard>
+      <div className="p-5 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30">
+        <h3 className="font-semibold mb-3">Cara Mendapatkan Token Bot</h3>
+        <ol className="list-decimal list-inside flex flex-col gap-2 text-sm text-muted-foreground">
+          <li>Buka Telegram dan cari @BotFather</li>
+          <li>Kirim perintah /newbot untuk membuat bot baru</li>
+          <li>Ikuti instruksi dan beri nama bot Anda</li>
+          <li>Salin token yang diberikan ke field di atas</li>
+          <li>Untuk Owner ID, cari @userinfobot dan kirim pesan apapun</li>
+        </ol>
+      </div>
     </div>
   )
 }
